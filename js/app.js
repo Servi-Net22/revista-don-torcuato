@@ -112,6 +112,7 @@
       C.lugar +
       "</span>" +
       '<span class="topbar-actions">' +
+      '<a href="recibir.html">Recibir ediciones</a>' +
       '<a href="anunciantes.html">Publicar aviso</a>' +
       '<a href="contacto.html">Contacto</a>' +
       "</span></div></div>" +
@@ -163,7 +164,8 @@
       "' target='_blank' rel='noopener'>WhatsApp de la revista</a></div>" +
       "<div>Instagram @" +
       C.instagram +
-      "</div></div></div>" +
+      "</div>" +
+      '<div><a href="recibir.html">Anotate para recibir la edición</a></div></div></div>' +
       '<div class="fine">© ' +
       D.edicion.anio +
       " " +
@@ -173,8 +175,140 @@
     );
   }
 
+  function subscribeForm(variant) {
+    var dark = variant !== "page";
+    var id = dark ? "form-suscribir" : "form-suscribir-page";
+    return (
+      '<form class="subscribe-form" id="' +
+      id +
+      '" novalidate>' +
+      '<input class="hp" type="text" name="website" tabindex="-1" autocomplete="off">' +
+      '<div class="field"><label for="' +
+      id +
+      '-mail">Email</label><input id="' +
+      id +
+      '-mail" name="email" type="email" placeholder="tumail@correo.com" autocomplete="email"></div>' +
+      '<div class="field"><label for="' +
+      id +
+      '-wa">WhatsApp</label><input id="' +
+      id +
+      '-wa" name="whatsapp" type="tel" placeholder="11 1234-5678" autocomplete="tel"></div>' +
+      '<div class="field field-wide subscribe-checks">' +
+      '<label><input type="checkbox" name="por_email" checked> Recibir por email</label>' +
+      '<label><input type="checkbox" name="por_whatsapp" checked> Recibir por WhatsApp</label>' +
+      "</div>" +
+      '<div class="actions"><button class="btn" type="submit">Anotarme</button></div>' +
+      '<p class="subscribe-msg field-wide" aria-live="polite"></p></form>'
+    );
+  }
+
+  function subscribeBand() {
+    return (
+      '<section class="subscribe-band" id="recibir">' +
+      '<div class="wrap"><p class="kicker">Lista del barrio</p>' +
+      "<h2>Recibí la edición por email o WhatsApp</h2>" +
+      "<p>Dejá un dato y te mandamos el enlace cuando salga el número. Sin spam: solo la revista.</p>" +
+      subscribeForm("band") +
+      "</div></section>"
+    );
+  }
+
+  function bindSubscribe() {
+    document.querySelectorAll(".subscribe-form").forEach(function (form) {
+      if (form.getAttribute("data-bound")) return;
+      form.setAttribute("data-bound", "1");
+      form.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        enviarSuscripcion(form);
+      });
+    });
+  }
+
+  function enviarSuscripcion(form) {
+    var msg = form.querySelector(".subscribe-msg");
+    var email = (form.email.value || "").trim();
+    var wa = (form.whatsapp.value || "").trim();
+    var porMail = form.por_email.checked;
+    var porWa = form.por_whatsapp.checked;
+    function say(text, ok) {
+      msg.textContent = text;
+      msg.className = "subscribe-msg field-wide " + (ok ? "ok" : "err");
+    }
+    if (form.website && form.website.value) {
+      say("Listo, te anotamos.", true);
+      return;
+    }
+    if (!email && !wa) {
+      say("Poné un email o un WhatsApp.", false);
+      return;
+    }
+    if (porMail && !email) {
+      say("Si querés recibir por email, completá el correo.", false);
+      return;
+    }
+    if (porWa && !wa) {
+      say("Si querés recibir por WhatsApp, completá el número.", false);
+      return;
+    }
+    if (!porMail && !porWa) {
+      say("Elegí al menos un canal: email o WhatsApp.", false);
+      return;
+    }
+    var payload = {
+      email: email,
+      whatsapp: wa,
+      por_email: porMail,
+      por_whatsapp: porWa,
+    };
+    var btn = form.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    say("Anotándote…", true);
+    fetch(C.suscribirUrl || "api/suscribir.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then(function (res) {
+        return res.json().then(function (data) {
+          return { ok: res.ok, data: data };
+        });
+      })
+      .then(function (out) {
+        if (!out.ok) throw new Error(out.data && out.data.error ? out.data.error : "No se pudo anotar");
+        say(out.data.mensaje || "Listo. Te mandamos la próxima edición.", true);
+        toast("Quedaste en la lista");
+        form.reset();
+        form.por_email.checked = true;
+        form.por_whatsapp.checked = true;
+      })
+      .catch(function (err) {
+        var text =
+          "Hola, quiero recibir Revista Don Torcuato.\nEmail: " +
+          email +
+          "\nWhatsApp: " +
+          wa +
+          "\nEmail: " +
+          (porMail ? "sí" : "no") +
+          " · WhatsApp: " +
+          (porWa ? "sí" : "no");
+        say(
+          (err && err.message ? err.message + " " : "") +
+            "Si preferís, anotate por WhatsApp de la revista.",
+          false
+        );
+        window.open(waLink(C.whatsapp, text), "_blank");
+      })
+      .finally(function () {
+        btn.disabled = false;
+      });
+  }
+
   function mountChrome() {
     document.body.insertAdjacentHTML("afterbegin", header());
+    var page = document.body.getAttribute("data-page") || "";
+    if (page !== "recibir") {
+      document.body.insertAdjacentHTML("beforeend", subscribeBand());
+    }
     document.body.insertAdjacentHTML("beforeend", footer());
     const toggle = document.querySelector(".nav-toggle");
     const nav = document.getElementById("nav");
@@ -249,7 +383,7 @@
       "</p>" +
       '<div class="actions">' +
       '<a class="btn" href="edicion.html">Leer la edición</a>' +
-      '<a class="btn btn-ghost" href="profesionales.html">Buscar un profesional</a>' +
+      '<a class="btn btn-ghost" href="recibir.html">Recibir por mail o WhatsApp</a>' +
       "</div>" +
       shareSet(C.nombre + " · " + ed.titulo, urlEdicion, C.lugar) +
       '</div><div class="cover-art" aria-hidden="true"></div></section>' +
@@ -766,7 +900,21 @@
       '<article class="note"><h3>2. Compartir el enlace</h3><p>Usá la URL de edicion.html. Es la misma para WhatsApp, mail, Instagram y el estado del comercio.</p></article>' +
       '<article class="note"><h3>3. PDF de mostrador</h3><p>En la edición tocá Imprimir / guardar PDF y dejalo en el local o adjuntalo al mail.</p></article>' +
       "</div></div>" +
-      '<div class="wrap section"><div class="ad"><div class="ad-label">Plantilla HTML</div><strong>email/edicion.html</strong><p>Hay una versión angosta, lista para pegar en Gmail, Outlook o un envío masivo. Actualizá el enlace de tu dominio antes de mandarla.</p><div class="actions"><a class="btn btn-ink" href="email/edicion.html">Ver plantilla</a></div></div></div>';
+      '<div class="wrap section"><div class="ad"><div class="ad-label">Plantilla HTML</div><strong>email/edicion.html</strong><p>Hay una versión angosta, lista para pegar en Gmail, Outlook o un envío masivo. Actualizá el enlace de tu dominio antes de mandarla.</p><div class="actions"><a class="btn btn-ink" href="email/edicion.html">Ver plantilla</a></div></div></div>' +
+      '<div class="wrap section"><div class="note"><h3>Lista de suscriptores</h3><p>Quienes se anotan en Recibir quedan guardados en el hosting. Para verlos o exportarlos: <a href="redaccion.html">Redacción</a>.</p></div></div>';
+  }
+
+  function renderRecibir() {
+    const root = document.getElementById("page");
+    root.innerHTML =
+      '<div class="wrap page-hero"><p class="kicker">Suscripción</p><h1>Recibí la revista en el celular</h1><p>Dejá el mail, el WhatsApp o los dos. Cuando salga el número te mandamos el enlace para leerla y reenviarla.</p></div>' +
+      '<div class="wrap section subscribe-page">' +
+      subscribeForm("page") +
+      "</div>" +
+      '<div class="wrap section grid-2">' +
+      '<div class="note"><h3>Por WhatsApp</h3><p>Te llega un mensaje con el enlace de la edición. Sirve para grupos del barrio y para leerla en el colectivo.</p></div>' +
+      '<div class="note"><h3>Por email</h3><p>Usamos el mail para la lista de envío. Podés anotarte con los dos canales y después elegir uno solo.</p></div>' +
+      "</div>";
   }
 
   const pages = {
@@ -781,12 +929,92 @@
     anunciantes: renderAnunciantes,
     contacto: renderContacto,
     difundir: renderDifundir,
+    recibir: renderRecibir,
+    redaccion: renderRedaccion,
   };
+
+  function renderRedaccion() {
+    const root = document.getElementById("page");
+    root.innerHTML =
+      '<div class="wrap page-hero"><p class="kicker">Uso interno</p><h1>Lista de quien quiere recibir la edición</h1><p>Ingresá la clave de redacción para ver mails y WhatsApp. También podés bajar un CSV para el envío.</p></div>' +
+      '<div class="wrap section"><form class="form" id="form-lista">' +
+      '<div class="field"><label for="clave">Clave</label><input id="clave" name="clave" type="password" required></div>' +
+      '<button class="btn btn-ink" type="submit">Ver lista</button>' +
+      '<p class="subscribe-msg" id="lista-msg" aria-live="polite"></p></form>' +
+      '<div id="lista-box" class="section"></div></div>';
+
+    document.getElementById("form-lista").addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var clave = ev.target.clave.value;
+      var msg = document.getElementById("lista-msg");
+      fetch("api/lista.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ clave: clave }),
+      })
+        .then(function (res) {
+          return res.json().then(function (data) {
+            return { ok: res.ok, data: data };
+          });
+        })
+        .then(function (out) {
+          if (!out.ok) throw new Error(out.data.error || "No se pudo abrir la lista");
+          var rows = out.data.suscriptores || [];
+          msg.textContent = out.data.total + " anotados";
+          msg.className = "subscribe-msg ok";
+          document.getElementById("lista-box").innerHTML =
+            '<p class="muted">' +
+            rows.length +
+            ' en la lista.</p><div class="grid-cards">' +
+            rows
+              .map(function (r) {
+                return (
+                  '<article class="card"><h3>' +
+                  (r.email || "Sin email") +
+                  "</h3><p>" +
+                  (r.whatsapp || "Sin WhatsApp") +
+                  '</p><div class="meta">Mail: ' +
+                  (r.por_email ? "sí" : "no") +
+                  " · WhatsApp: " +
+                  (r.por_whatsapp ? "sí" : "no") +
+                  "</div></article>"
+                );
+              })
+              .join("") +
+            '</div><div class="actions" style="margin-top:1rem"><button type="button" class="btn btn-line" id="btn-csv">Descargar CSV</button></div>';
+          var csvBtn = document.getElementById("btn-csv");
+          if (csvBtn) {
+            csvBtn.addEventListener("click", function () {
+              var csv = "email,whatsapp,por_email,por_whatsapp,alta\n" +
+                rows
+                  .map(function (r) {
+                    return [r.email, r.whatsapp, r.por_email ? "si" : "no", r.por_whatsapp ? "si" : "no", r.alta]
+                      .map(function (v) {
+                        return '"' + String(v || "").replace(/"/g, '""') + '"';
+                      })
+                      .join(",");
+                  })
+                  .join("\n");
+              var blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+              var a = document.createElement("a");
+              a.href = URL.createObjectURL(blob);
+              a.download = "suscriptores-revista.csv";
+              a.click();
+            });
+          }
+        })
+        .catch(function (err) {
+          msg.textContent = err.message;
+          msg.className = "subscribe-msg err";
+        });
+    });
+  }
 
   document.addEventListener("DOMContentLoaded", function () {
     mountChrome();
     bindShare();
     const page = document.body.getAttribute("data-page");
     if (pages[page]) pages[page]();
+    bindSubscribe();
   });
 })();

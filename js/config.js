@@ -10,4 +10,5 @@ window.REVISTA_CONFIG = {
   instagram: "revistadontorcuato",
   facebook: "revistadontorcuato",
   telefono: "(11) 1234-5678",
+  suscribirUrl: "api/suscribir.php",
 };

@@ -6,3 +6,5 @@ Thumbs.db
 *.swp
 .env
 .env.*
+_private/suscriptores.json
+_private/suscriptores.csv

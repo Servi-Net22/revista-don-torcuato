@@ -10,6 +10,8 @@ Revista digital de Don Torcuato (Tigre, Buenos Aires). Se publica en cualquier h
 - Buscador de profesionales
 - Paquetes para anunciantes
 - Formulario de contacto (abre WhatsApp o el mail)
+- Registro para recibir ediciones por email y/o WhatsApp (`recibir.html`)
+- Lista interna de suscriptores en `redaccion.html` (clave en `_private/config.php`)
 - Página **Difundir** con textos listos para reenviar
 - Plantilla HTML de email en `email/edicion.html`
 

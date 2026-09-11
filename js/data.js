@@ -19,6 +19,7 @@ window.REVISTA_DATA = {
     { href: "clasificados.html", label: "Clasificados", page: "clasificados" },
     { href: "eventos.html", label: "Agenda", page: "eventos" },
     { href: "anunciantes.html", label: "Anunciantes", page: "anunciantes" },
+    { href: "recibir.html", label: "Recibir", page: "recibir" },
     { href: "difundir.html", label: "Difundir", page: "difundir" },
   ],
 

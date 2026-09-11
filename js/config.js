@@ -3,8 +3,8 @@ window.REVISTA_CONFIG = {
   masthead: "TORCUATO",
   lema: "La revista digital del barrio",
   lugar: "Don Torcuato, Tigre, Buenos Aires",
-  /* Cambiá esta URL por la de tu hosting cuando publiques */
-  url: "",
+  /* URL pública. Si más adelante usás un dominio propio, cambiá esta línea. */
+  url: "https://servi-net22.github.io/revista-don-torcuato",
   email: "hola@revistadontorcuato.com.ar",
   whatsapp: "5491112345678",
   instagram: "revistadontorcuato",

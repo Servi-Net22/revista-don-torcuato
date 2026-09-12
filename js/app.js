@@ -330,11 +330,25 @@
     });
   }
 
+  function artImg(article, cls) {
+    if (!article || !article.imagen) return "";
+    return (
+      '<img class="' +
+      (cls || "art-img") +
+      '" src="' +
+      article.imagen +
+      '" alt="' +
+      (article.alt || article.titulo) +
+      '">'
+    );
+  }
+
   function card(article) {
     return (
       '<a class="card card-link" href="articulo.html?id=' +
       article.id +
       '">' +
+      (article.imagen ? '<span class="card-media">' + artImg(article) + "</span>" : "") +
       '<span class="kicker">' +
       article.kicker +
       "</span>" +
@@ -394,13 +408,17 @@
       '<a class="btn btn-ghost" href="indice.html">Índice de anunciantes</a>' +
       "</div>" +
       shareSet(C.nombre + " · " + ed.titulo, urlEdicion, C.lugar) +
-      '</div><div class="cover-art" aria-hidden="true"></div></section>' +
+      '</div><div class="cover-art">' +
+      (cover && cover.imagen ? artImg(cover, "cover-photo") : "") +
+      "</div></section>" +
       '<div class="wrap">' +
       '<section class="section"><div class="section-head"><h2>En esta edición</h2><a href="edicion.html">Ver todo</a></div>' +
       '<div class="feature">' +
       '<a class="feature-art" href="articulo.html?id=' +
       cover.id +
-      '"><span>' +
+      '">' +
+      artImg(cover, "feature-photo") +
+      "<span>" +
       cover.kicker +
       "</span><strong>" +
       cover.titulo +
@@ -408,7 +426,7 @@
       '<div class="grid-cards">' +
       dest.map(card).join("") +
       "</div></div></section>" +
-      '<section class="section"><div class="ad"><div class="ad-label">Espacio del anunciante</div><strong>Farmacia Reconquista</strong><p>Obra social, dermocosmética y delivery en Don Torcuato. Entrá al índice o pedí tu módulo destacado.</p><div class="actions"><a class="btn btn-ink" href="anunciantes.html">Quiero anunciar</a><a class="btn btn-line" href="indice.html">Ver el índice</a></div></div></section>' +
+      '<section class="section"><div class="ad"><div class="ad-label">Espacio del anunciante</div><strong>Farmacia Magnin</strong><p>Triunvirato 1851. Teléfono publicado 11 4748-4605. El turno del día se consulta en el municipio.</p><div class="actions"><a class="btn btn-ink" href="farmacias.html">Farmacias del barrio</a><a class="btn btn-line" href="indice.html">Ver el índice</a></div></div></section>' +
       '<section class="section"><div class="section-head"><h2>Secciones</h2></div><div class="grid-3 section-tiles">' +
       D.secciones
         .map(function (s) {
@@ -463,15 +481,18 @@
       '<div class="meta">' +
       c.dir +
       "<br>" +
-      c.horario +
+      (c.horario || "") +
       "</div>" +
       '<div class="wa-row">' +
-      '<a class="btn btn-wa" target="_blank" rel="noopener" href="' +
-      waLink(c.wa, "Hola, los vi en " + C.nombre) +
-      '">WhatsApp</a>' +
-      '<a class="btn btn-line" href="tel:' +
-      c.tel.replace(/\s/g, "") +
-      '">Llamar</a></div></article>'
+      (c.wa
+        ? '<a class="btn btn-wa" target="_blank" rel="noopener" href="' +
+          waLink(c.wa, "Hola, los vi en " + C.nombre) +
+          '">WhatsApp</a>'
+        : "") +
+      (c.tel
+        ? '<a class="btn btn-line" href="tel:' + c.tel.replace(/\s/g, "") + '">Llamar</a>'
+        : "") +
+      "</div></article>"
     );
   }
 
@@ -495,9 +516,16 @@
       " · " +
       p.mat +
       "</div>" +
-      '<div class="wa-row"><a class="btn btn-wa" target="_blank" rel="noopener" href="' +
-      waLink(p.wa, "Hola " + p.nombre + ", te escribo por " + C.nombre) +
-      '">Pedir turno</a></div></article>'
+      '<div class="wa-row">' +
+      (p.wa
+        ? '<a class="btn btn-wa" target="_blank" rel="noopener" href="' +
+          waLink(p.wa, "Hola " + p.nombre + ", te escribo por " + C.nombre) +
+          '">WhatsApp</a>'
+        : "") +
+      (p.tel
+        ? '<a class="btn btn-line" href="tel:' + p.tel.replace(/\s/g, "") + '">Llamar</a>'
+        : "") +
+      "</div></article>"
     );
   }
 
@@ -621,7 +649,7 @@
     const root = document.getElementById("page");
     const tipos = unique(D.clasificados, "tipo");
     root.innerHTML =
-      '<div class="wrap page-hero"><p class="kicker">Avisos de vecinos</p><h1>Clasificados</h1><p>Como en el papel: Se busca, Alquiler, Venta, Empleo y Servicio. Un aviso corto, con teléfono a la vista, que se reenvía.</p>' +
+      '<div class="wrap page-hero"><p class="kicker">Avisos del barrio</p><h1>Clasificados</h1><p>Agenda de septiembre, empleos publicados, salud y espacios para el aviso del vecino. No inventamos clasificados particulares.</p>' +
       '<div class="actions"><a class="btn btn-ink" href="contacto.html">Publicar un clasificado</a></div></div>' +
       '<div class="wrap section"><div class="filters"><select id="tipo"><option value="">Todos</option>' +
       tipos
@@ -642,7 +670,7 @@
             '<article class="card">' +
             (c.dest ? '<span class="badge badge-hot">' + c.tipo + "</span>" : '<span class="badge">' + c.tipo + "</span>") +
             "<h3>" +
-            c.titulo +
+            (c.href ? '<a href="' + c.href + '">' + c.titulo + "</a>" : c.titulo) +
             "</h3><p>" +
             c.texto +
             '</p><div class="meta">Contacto ' +
@@ -791,6 +819,7 @@
         .map(function (a) {
           return (
             '<article class="edition-sheet">' +
+            (a.imagen ? '<figure class="edition-figure">' + artImg(a) + "</figure>" : "") +
             '<p class="kicker">' +
             a.kicker +
             "</p><h2>" +
@@ -818,39 +847,56 @@
 
   function renderActualidad() {
     const root = document.getElementById("page");
-    const editorial =
-      D.articulos.find(function (a) {
-        return a.seccion === "editorial" && a.portada;
-      }) ||
-      D.articulos.find(function (a) {
-        return a.seccion === "editorial";
-      });
-    const otros = D.articulos.filter(function (a) {
-      return !editorial || a.id !== editorial.id;
+    const noticias = D.articulos.filter(function (a) {
+      return a.seccion === "actualidad" || a.seccion === "barrio";
+    });
+    const editorial = D.articulos.find(function (a) {
+      return a.seccion === "editorial";
+    });
+    const resto = D.articulos.filter(function (a) {
+      return a.seccion !== "actualidad" && a.seccion !== "barrio" && a.seccion !== "editorial";
     });
     root.innerHTML =
-      '<div class="wrap page-hero"><p class="kicker">Editorial · N° ' +
+      '<div class="wrap page-hero"><p class="kicker">Actualidad · N° ' +
       String(D.edicion.numero).padStart(2, "0") +
-      "</p><h1>" +
-      (editorial ? editorial.titulo : "Editorial") +
-      "</h1><p>" +
-      (editorial ? editorial.bajada : "La palabra de la edición.") +
-      "</p></div>" +
+      "</p><h1>Lo que pasa en Don Torcuato</h1><p>Notas de septiembre: teatro, jardines, lectura y la guía de salud. Cada nota tiene foto y se puede reenviar.</p></div>" +
+      '<div class="wrap section"><div class="grid-cards">' +
+      noticias.map(card).join("") +
+      "</div></div>" +
       (editorial
-        ? '<div class="wrap article"><div class="article-body">' +
-          editorial.cuerpo
-            .map(function (p) {
-              return "<p>" + p + "</p>";
-            })
-            .join("") +
-          '<div class="meta">' +
-          editorial.autor +
-          " · " +
-          editorial.tiempo +
-          "</div></div></div>"
+        ? '<div class="wrap section"><div class="section-head"><h2>Editorial</h2><a href="articulo.html?id=' +
+          editorial.id +
+          '">Leer</a></div><div class="grid-cards">' +
+          card(editorial) +
+          "</div></div>"
         : "") +
-      '<div class="wrap section"><div class="section-head"><h2>También en esta edición</h2></div><div class="grid-cards">' +
-      otros.map(card).join("") +
+      (resto.length
+        ? '<div class="wrap section"><div class="section-head"><h2>También en esta edición</h2></div><div class="grid-cards">' +
+          resto.map(card).join("") +
+          "</div></div>"
+        : "");
+  }
+
+  function renderFarmacias() {
+    const root = document.getElementById("page");
+    const info = D.farmacias || {};
+    const locales = D.comercios.filter(function (c) {
+      return c.rubro === "Salud";
+    });
+    root.innerHTML =
+      '<div class="wrap page-hero"><p class="kicker">Municipio de Tigre</p><h1>Farmacias de Don Torcuato</h1><p>' +
+      (info.aviso || "Llamá antes de ir.") +
+      "</p>" +
+      (info.oficial
+        ? '<div class="actions"><a class="btn" href="' +
+          info.oficial +
+          '" target="_blank" rel="noopener">' +
+          (info.oficialLabel || "Ver turno oficial") +
+          "</a></div>"
+        : "") +
+      "</div>" +
+      '<div class="wrap section"><div class="section-head"><h2>Locales con dato publicado</h2></div><div class="grid-cards">' +
+      locales.map(comercioCard).join("") +
       "</div></div>";
   }
 
@@ -878,6 +924,7 @@
       "</div>" +
       shareSet(art.titulo, url, C.nombre) +
       "</div>" +
+      (art.imagen ? '<div class="wrap"><figure class="article-figure">' + artImg(art) + "</figure></div>" : "") +
       '<div class="wrap article"><div class="article-body">' +
       art.cuerpo
         .map(function (p) {
@@ -1132,6 +1179,7 @@
     home: renderHome,
     edicion: renderEdicion,
     actualidad: renderActualidad,
+    farmacias: renderFarmacias,
     articulo: renderArticulo,
     comercios: renderComercios,
     profesionales: renderProfesionales,

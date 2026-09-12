@@ -68,7 +68,7 @@
   }
 
   function shareSet(title, url, extra) {
-    const line = extra || "Revista Brisas · Edición " + D.edicion.numero;
+    const line = extra || C.nombre + " · Edición " + D.edicion.numero;
     const text = title + "\n" + line + "\n" + url;
     return (
       '<div class="sharebar" data-share>' +
@@ -102,10 +102,8 @@
 
     return (
       '<div class="topbar"><div class="wrap topbar-inner">' +
-      "<span>Año " +
-      (ed.anioRevista || "") +
-      " · N° " +
-      ed.numero +
+      "<span>N° " +
+      String(ed.numero).padStart(2, "0") +
       " · " +
       ed.mes +
       " " +
@@ -120,7 +118,9 @@
       "</span></div></div>" +
       '<header class="site-header"><div class="wrap">' +
       '<div class="masthead">' +
-      '<div class="masthead-side">Año 32 · Digital</div>' +
+      '<div class="masthead-side">Edición ' +
+      String(ed.numero).padStart(2, "0") +
+      " · Digital</div>" +
       '<a class="brand" href="index.html">' +
       '<span class="brand-name">' +
       C.masthead +
@@ -208,8 +208,8 @@
     return (
       '<section class="subscribe-band" id="recibir">' +
       '<div class="wrap"><p class="kicker">Lista del barrio</p>' +
-      "<h2>Recibí Brisas por email o WhatsApp</h2>" +
-      "<p>Como en el papel: pedí la edición con tu mail o tu número. Por WhatsApp también alcanza con escribir QUIERO RECIBIR BRISAS al 11 5048-9366.</p>" +
+      "<h2>Recibí la revista por email o WhatsApp</h2>" +
+      "<p>Como en el papel: pedí la edición con tu mail o tu número. Te mandamos el enlace para leerla y reenviarla.</p>" +
       subscribeForm("band") +
       "</div></section>"
     );
@@ -285,7 +285,9 @@
       })
       .catch(function (err) {
         var text =
-          "Hola, quiero recibir Revista Brisas.\nEmail: " +
+          "Hola, quiero recibir " +
+          C.nombre +
+          ".\nEmail: " +
           email +
           "\nWhatsApp: " +
           wa +
@@ -370,10 +372,8 @@
     const urlEdicion = abs("edicion.html");
     root.innerHTML =
       '<section class="cover"><div class="cover-copy">' +
-      '<div class="cover-issue">Año ' +
-      (ed.anioRevista || "") +
-      " · N° " +
-      ed.numero +
+      '<div class="cover-issue">N° ' +
+      String(ed.numero).padStart(2, "0") +
       " · " +
       ed.mes +
       " " +
@@ -390,7 +390,8 @@
       (C.pdfEdicion
         ? '<a class="btn btn-ghost" href="' + C.pdfEdicion + '" target="_blank" rel="noopener">Ver el PDF</a>'
         : "") +
-      '<a class="btn btn-ghost" href="recibir.html">Recibir Brisas</a>' +
+      '<a class="btn btn-ghost" href="recibir.html">Recibir la revista</a>' +
+      '<a class="btn btn-ghost" href="indice.html">Índice de anunciantes</a>' +
       "</div>" +
       shareSet(C.nombre + " · " + ed.titulo, urlEdicion, C.lugar) +
       '</div><div class="cover-art" aria-hidden="true"></div></section>' +
@@ -407,11 +408,29 @@
       '<div class="grid-cards">' +
       dest.map(card).join("") +
       "</div></div></section>" +
-      '<section class="section"><div class="ad"><div class="ad-label">Espacio del anunciante</div><strong>Santi Racing</strong><p>Atención personalizada en Sourdeaux. Cierre de la edición de octubre: 20 de septiembre. 11 5048-9366.</p><div class="actions"><a class="btn btn-ink" href="anunciantes.html">Quiero anunciar en Brisas</a></div></div></section>' +
+      '<section class="section"><div class="ad"><div class="ad-label">Espacio del anunciante</div><strong>Farmacia Reconquista</strong><p>Obra social, dermocosmética y delivery en Don Torcuato. Entrá al índice o pedí tu módulo destacado.</p><div class="actions"><a class="btn btn-ink" href="anunciantes.html">Quiero anunciar</a><a class="btn btn-line" href="indice.html">Ver el índice</a></div></div></section>' +
       '<section class="section"><div class="section-head"><h2>Secciones</h2></div><div class="grid-3 section-tiles">' +
       D.secciones
         .map(function (s) {
           return "<a href='" + s.href + "'><p>" + s.desc + "</p><h3>" + s.nombre + "</h3></a>";
+        })
+        .join("") +
+      "</div></section>" +
+      '<section class="section"><div class="section-head"><h2>Índice de anunciantes</h2><a href="indice.html">Ver A–Z</a></div>' +
+      '<div class="indice-preview">' +
+      entriesIndice()
+        .slice(0, 8)
+        .map(function (a) {
+          return (
+            '<a class="indice-preview-row" href="indice.html">' +
+            "<strong>" +
+            a.nombre +
+            "</strong><span>" +
+            a.rubro +
+            " · " +
+            a.seccion +
+            "</span></a>"
+          );
         })
         .join("") +
       "</div></section>" +
@@ -448,7 +467,7 @@
       "</div>" +
       '<div class="wa-row">' +
       '<a class="btn btn-wa" target="_blank" rel="noopener" href="' +
-      waLink(c.wa, "Hola, los vi en Revista Brisas") +
+      waLink(c.wa, "Hola, los vi en " + C.nombre) +
       '">WhatsApp</a>' +
       '<a class="btn btn-line" href="tel:' +
       c.tel.replace(/\s/g, "") +
@@ -477,7 +496,7 @@
       p.mat +
       "</div>" +
       '<div class="wa-row"><a class="btn btn-wa" target="_blank" rel="noopener" href="' +
-      waLink(p.wa, "Hola " + p.nombre + ", te escribo por Revista Brisas") +
+      waLink(p.wa, "Hola " + p.nombre + ", te escribo por " + C.nombre) +
       '">Pedir turno</a></div></article>'
     );
   }
@@ -602,7 +621,7 @@
     const root = document.getElementById("page");
     const tipos = unique(D.clasificados, "tipo");
     root.innerHTML =
-      '<div class="wrap page-hero"><p class="kicker">Avisos de vecinos</p><h1>Clasificados</h1><p>Alquileres, ventas, empleos y servicios. Un aviso corto que se lee en el celular y se reenvía.</p>' +
+      '<div class="wrap page-hero"><p class="kicker">Avisos de vecinos</p><h1>Clasificados</h1><p>Como en el papel: Se busca, Alquiler, Venta, Empleo y Servicio. Un aviso corto, con teléfono a la vista, que se reenvía.</p>' +
       '<div class="actions"><a class="btn btn-ink" href="contacto.html">Publicar un clasificado</a></div></div>' +
       '<div class="wrap section"><div class="filters"><select id="tipo"><option value="">Todos</option>' +
       tipos
@@ -666,8 +685,9 @@
     const root = document.getElementById("page");
     const url = abs("anunciantes.html");
     root.innerHTML =
-      '<div class="wrap page-hero"><p class="kicker">Para comercios y profesionales</p><h1>Anunciá donde el barrio reenvía</h1><p>La revista se publica en el hosting y se reparte por WhatsApp, email e Instagram. Tu aviso no se queda quieto: se comparte.</p>' +
-      shareSet("Quiero anunciar en Revista Brisas", url, "Paquetes para comercios y profesionales") +
+      '<div class="wrap page-hero"><p class="kicker">Para comercios y profesionales</p><h1>Anunciá donde el barrio reenvía</h1><p>Clasificado, ficha en el índice o módulo destacado. La revista se publica en el hosting y se reparte por WhatsApp, email e Instagram.</p>' +
+      '<div class="actions"><a class="btn" href="indice.html">Índice de anunciantes</a><a class="btn btn-ink" href="contacto.html">Pedir un espacio</a></div>' +
+      shareSet("Quiero anunciar en " + C.nombre, url, "Paquetes para comercios y profesionales") +
       "</div>" +
       '<div class="wrap section"><div class="grid-cards">' +
       D.paquetes
@@ -690,7 +710,7 @@
         })
         .join("") +
       "</div></div>" +
-      '<div class="wrap section"><div class="section-head"><h2>En esta edición anuncian</h2></div><div class="grid-4">' +
+      '<div class="wrap section"><div class="section-head"><h2>En esta edición anuncian</h2><a href="indice.html">Índice A–Z</a></div><div class="grid-4">' +
       D.anunciantes
         .map(function (a) {
           return (
@@ -700,6 +720,10 @@
             a.nombre +
             "</strong><p>" +
             a.rubro +
+            " · " +
+            a.seccion +
+            "</p><p>" +
+            a.tel +
             "</p></article>"
           );
         })
@@ -794,18 +818,39 @@
 
   function renderActualidad() {
     const root = document.getElementById("page");
-    const barrio = D.articulos.filter(function (a) {
-      return a.seccion === "barrio";
-    });
-    const rest = D.articulos.filter(function (a) {
-      return a.seccion !== "barrio";
+    const editorial =
+      D.articulos.find(function (a) {
+        return a.seccion === "editorial" && a.portada;
+      }) ||
+      D.articulos.find(function (a) {
+        return a.seccion === "editorial";
+      });
+    const otros = D.articulos.filter(function (a) {
+      return !editorial || a.id !== editorial.id;
     });
     root.innerHTML =
-      '<div class="wrap page-hero"><p class="kicker">Actualidad</p><h1>Lo que pasa en Don Torcuato</h1><p>Notas de la edición, historias de barrio y la oficina comercial.</p></div>' +
-      '<div class="wrap section"><div class="grid-cards">' +
-      rest.map(card).join("") +
-      '</div></div><div class="wrap section" id="barrio"><div class="section-head"><h2>Barrio</h2></div><div class="grid-cards">' +
-      barrio.map(card).join("") +
+      '<div class="wrap page-hero"><p class="kicker">Editorial · N° ' +
+      String(D.edicion.numero).padStart(2, "0") +
+      "</p><h1>" +
+      (editorial ? editorial.titulo : "Editorial") +
+      "</h1><p>" +
+      (editorial ? editorial.bajada : "La palabra de la edición.") +
+      "</p></div>" +
+      (editorial
+        ? '<div class="wrap article"><div class="article-body">' +
+          editorial.cuerpo
+            .map(function (p) {
+              return "<p>" + p + "</p>";
+            })
+            .join("") +
+          '<div class="meta">' +
+          editorial.autor +
+          " · " +
+          editorial.tiempo +
+          "</div></div></div>"
+        : "") +
+      '<div class="wrap section"><div class="section-head"><h2>También en esta edición</h2></div><div class="grid-cards">' +
+      otros.map(card).join("") +
       "</div></div>";
   }
 
@@ -860,7 +905,9 @@
     const ed = D.edicion;
     const url = abs("edicion.html");
     const waTexto =
-      "Salió Revista Brisas N° " +
+      "Salió " +
+      C.nombre +
+      " N° " +
       ed.numero +
       " · " +
       ed.titulo +
@@ -871,7 +918,9 @@
     const mailTexto =
       "Hola,\n\nCompartimos la edición " +
       ed.numero +
-      " de Revista Brisas (" +
+      " de " +
+      C.nombre +
+      " (" +
       ed.mes +
       " " +
       ed.anio +
@@ -881,7 +930,8 @@
       ed.bajada +
       "\n\nAbrí la revista: " +
       url +
-      "\n\nSi querés anunciar o sumar tu ficha profesional, respondé este mail.\n\nRedacción Brisas";
+      "\n\nSi querés anunciar o sumar tu ficha profesional, respondé este mail.\n\nRedacción " +
+      C.nombre;
 
     root.innerHTML =
       '<div class="wrap page-hero"><p class="kicker">Distribución</p><h1>Mandá la edición por WhatsApp, email y redes</h1><p>La revista vive en el hosting. Estos textos ya están listos para copiar y reenviar a grupos del barrio, listas de mail y estados.</p></div>' +
@@ -898,7 +948,7 @@
       mailTexto.replace(/\n/g, "<br>") +
       '</p><div class="wa-row">' +
       '<a class="btn btn-ink" href="' +
-      mailLink("Revista Brisas N° " + ed.numero + " · " + ed.titulo, mailTexto) +
+      mailLink(C.nombre + " N° " + ed.numero + " · " + ed.titulo, mailTexto) +
       '">Abrir el mail</a>' +
       copyBtn(mailTexto, "Copiar texto") +
       "</div></article></div>" +
@@ -924,6 +974,160 @@
       "</div>";
   }
 
+  function entriesIndice() {
+    var seen = {};
+    var list = [];
+    function add(item) {
+      var key = norm(item.nombre);
+      if (!key || seen[key]) return;
+      seen[key] = true;
+      list.push(item);
+    }
+    (D.comercios || []).forEach(function (c) {
+      add({
+        nombre: c.nombre,
+        rubro: c.rubro,
+        seccion: "Comercios",
+        href: "comercios.html",
+        tel: c.tel || "",
+        wa: c.wa || "",
+        dest: !!c.dest,
+      });
+    });
+    (D.profesionales || []).forEach(function (p) {
+      add({
+        nombre: p.nombre,
+        rubro: p.oficio || p.rubro,
+        seccion: "Profesionales",
+        href: "profesionales.html",
+        tel: p.tel || "",
+        wa: p.wa || "",
+        dest: !!p.dest,
+      });
+    });
+    (D.anunciantes || []).forEach(function (a) {
+      add({
+        nombre: a.nombre,
+        rubro: a.rubro,
+        seccion: a.seccion || "Anunciantes",
+        href: "anunciantes.html",
+        tel: a.tel || "",
+        wa: "",
+        dest: a.tipo === "Portada" || a.tipo === "Destacado",
+      });
+    });
+    list.sort(function (a, b) {
+      return a.nombre.localeCompare(b.nombre, "es", { sensitivity: "base" });
+    });
+    return list;
+  }
+
+  function letraIndice(nombre) {
+    var n = norm(nombre).replace(/^(dra|dr|arq|estudio)\.?\s+/, "");
+    var ch = (n.charAt(0) || "#").toUpperCase();
+    return /[A-Z]/.test(ch) ? ch : "#";
+  }
+
+  function renderIndice() {
+    const root = document.getElementById("page");
+    const todos = entriesIndice();
+    const rubros = unique(todos, "rubro");
+    const secciones = unique(todos, "seccion");
+    root.innerHTML =
+      '<div class="wrap page-hero"><p class="kicker">Como en el papel</p><h1>Índice de anunciantes</h1><p>Orden alfabético de quien anuncia en esta edición: comercios, profesionales y módulos. Teléfono y sección a la vista.</p>' +
+      '<div class="actions"><a class="btn btn-ink" href="anunciantes.html">Quiero entrar al índice</a></div></div>' +
+      '<div class="wrap section"><div class="filters">' +
+      '<input id="q" type="search" placeholder="Buscar nombre, rubro o teléfono">' +
+      '<select id="rubro"><option value="">Todos los rubros</option>' +
+      rubros
+        .map(function (r) {
+          return "<option>" + r + "</option>";
+        })
+        .join("") +
+      '</select><select id="seccion"><option value="">Todas las secciones</option>' +
+      secciones
+        .map(function (s) {
+          return "<option>" + s + "</option>";
+        })
+        .join("") +
+      '</select></div><nav class="indice-az" id="indice-az"></nav><div id="lista"></div></div>';
+
+    function paint() {
+      const q = document.getElementById("q").value;
+      const r = document.getElementById("rubro").value;
+      const s = document.getElementById("seccion").value;
+      const items = todos.filter(function (a) {
+        return (
+          (!r || a.rubro === r) &&
+          (!s || a.seccion === s) &&
+          coincide({ nombre: a.nombre, rubro: a.rubro, desc: a.seccion, dir: a.tel }, q)
+        );
+      });
+      var grupos = {};
+      items.forEach(function (a) {
+        var letra = letraIndice(a.nombre);
+        if (!grupos[letra]) grupos[letra] = [];
+        grupos[letra].push(a);
+      });
+      var letras = Object.keys(grupos).sort();
+      document.getElementById("indice-az").innerHTML = letras
+        .map(function (l) {
+          return '<a href="#letra-' + l + '">' + l + "</a>";
+        })
+        .join("");
+      document.getElementById("lista").innerHTML = items.length
+        ? letras
+            .map(function (l) {
+              return (
+                '<section class="indice-block" id="letra-' +
+                l +
+                '"><h2>' +
+                l +
+                "</h2>" +
+                grupos[l]
+                  .map(function (a) {
+                    var tel = a.tel
+                      ? '<a href="tel:' + a.tel.replace(/\s/g, "") + '">' + a.tel + "</a>"
+                      : "";
+                    var wa = a.wa
+                      ? '<a class="btn btn-wa" target="_blank" rel="noopener" href="' +
+                        waLink(a.wa, "Hola, los vi en el índice de " + C.nombre) +
+                        '">WhatsApp</a>'
+                      : "";
+                    return (
+                      '<article class="indice-row">' +
+                      '<div class="indice-who"><strong>' +
+                      a.nombre +
+                      "</strong>" +
+                      (a.dest ? '<span class="badge badge-hot">Destacado</span>' : "") +
+                      "</div>" +
+                      '<span class="indice-lead" aria-hidden="true"></span>' +
+                      '<div class="indice-meta">' +
+                      a.rubro +
+                      " · <a href='" +
+                      a.href +
+                      "'>" +
+                      a.seccion +
+                      "</a>" +
+                      (tel ? " · " + tel : "") +
+                      "</div>" +
+                      (wa ? '<div class="indice-wa">' + wa + "</div>" : "") +
+                      "</article>"
+                    );
+                  })
+                  .join("") +
+                "</section>"
+              );
+            })
+            .join("")
+        : '<div class="empty">Nadie coincide. Probá otra palabra o publicá tu aviso.</div>';
+    }
+    document.getElementById("q").addEventListener("input", paint);
+    document.getElementById("rubro").addEventListener("change", paint);
+    document.getElementById("seccion").addEventListener("change", paint);
+    paint();
+  }
+
   const pages = {
     home: renderHome,
     edicion: renderEdicion,
@@ -934,6 +1138,7 @@
     clasificados: renderClasificados,
     eventos: renderEventos,
     anunciantes: renderAnunciantes,
+    indice: renderIndice,
     contacto: renderContacto,
     difundir: renderDifundir,
     recibir: renderRecibir,

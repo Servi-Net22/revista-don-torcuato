@@ -1,15 +1,16 @@
-# Revista Brisas
-
-Edición digital de **Brisas** (Don Torcuato). Año 32, N° 369, septiembre 2026.
+# Revista Don Torcuato
 
 Revista digital de Don Torcuato (Tigre, Buenos Aires). Se publica en cualquier hosting y se reparte por WhatsApp, email y redes.
+
+La estructura sigue el orden de una revista de barrio: **editorial**, **índice de anunciantes**, **comercios**, **profesionales** y **clasificados**. El nombre, los contactos y los textos son propios de esta edición digital.
 
 ## Qué incluye
 
 - Portada y edición completa (se puede imprimir o guardar como PDF)
-- Secciones: Actualidad, Barrio, Comercios, Profesionales, Clasificados, Agenda
+- Secciones: Editorial, Índice de anunciantes, Comercios, Profesionales, Clasificados, Agenda
 - Guía de comercios con filtro y WhatsApp
 - Buscador de profesionales
+- Índice A–Z de quien anuncia (rubro, sección y teléfono)
 - Paquetes para anunciantes
 - Formulario de contacto (abre WhatsApp o el mail)
 - Registro para recibir ediciones por email y/o WhatsApp (`recibir.html`)
@@ -25,8 +26,8 @@ Los textos de ejemplo son de muestra. Reemplazalos por comercios, profesionales 
    - `url` → `https://tudominio.com.ar` (sin barra final)
    - `email`, `whatsapp`, `telefono`, `instagram`
 2. Editá contenidos en `js/data.js`:
-   - `edicion`, `articulos`, `comercios`, `profesionales`, `clasificados`, `eventos`, `paquetes`
-3. En `email/edicion.html` reemplazá `TU-DOMINIO.com.ar`.
+   - `edicion`, `articulos`, `comercios`, `profesionales`, `clasificados`, `eventos`, `paquetes`, `anunciantes`
+3. En `email/edicion.html` reemplazá el enlace de la edición si cambia el dominio.
 
 El WhatsApp se escribe con código de país, sin `+` ni espacios: `54911XXXXXXXX`.
 
@@ -40,7 +41,7 @@ La revista es HTML, CSS y JavaScript. No necesita base de datos ni Node.
 4. Probá:
    - `https://tudominio.com.ar/`
    - `https://tudominio.com.ar/edicion.html`
-   - `https://tudominio.com.ar/profesionales.html`
+   - `https://tudominio.com.ar/indice.html`
 
 Si la subís a una subcarpeta, poné esa URL completa en `js/config.js`.
 
@@ -56,7 +57,7 @@ Si la subís a una subcarpeta, poné esa URL completa en `js/config.js`.
 
 En `js/data.js`, copiá un objeto de `comercios` o `profesionales` y cambiá nombre, rubro, dirección y WhatsApp. Recargá el sitio.
 
-Para destacar a alguien en la home, dejá `"dest": true`.
+Para destacar a alguien en la home y en el índice, dejá `"dest": true`. El índice se arma solo con esas fichas y con `anunciantes`.
 
 ## Cómo armar la próxima edición
 

@@ -117,8 +117,9 @@ button, input, select, textarea { font: inherit; }
   font-weight: 600;
   font-size: clamp(2.4rem, 7vw, 4.4rem);
   line-height: 0.85;
-  letter-spacing: 0.12em;
-  color: var(--forest);
+  letter-spacing: 0.04em;
+  font-style: italic;
+  color: var(--ink);
 }
 
 .brand-tag {
@@ -218,7 +219,7 @@ button, input, select, textarea { font: inherit; }
 }
 
 .cover-art::after {
-  content: "01";
+  content: "369";
   position: absolute;
   right: 8%;
   bottom: 6%;

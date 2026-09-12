@@ -68,7 +68,7 @@
   }
 
   function shareSet(title, url, extra) {
-    const line = extra || "Revista Don Torcuato · Edición " + D.edicion.numero;
+    const line = extra || "Revista Brisas · Edición " + D.edicion.numero;
     const text = title + "\n" + line + "\n" + url;
     return (
       '<div class="sharebar" data-share>' +
@@ -102,8 +102,10 @@
 
     return (
       '<div class="topbar"><div class="wrap topbar-inner">' +
-      "<span>Edición N° " +
-      String(ed.numero).padStart(2, "0") +
+      "<span>Año " +
+      (ed.anioRevista || "") +
+      " · N° " +
+      ed.numero +
       " · " +
       ed.mes +
       " " +
@@ -118,7 +120,7 @@
       "</span></div></div>" +
       '<header class="site-header"><div class="wrap">' +
       '<div class="masthead">' +
-      '<div class="masthead-side">Revista digital</div>' +
+      '<div class="masthead-side">Año 32 · Digital</div>' +
       '<a class="brand" href="index.html">' +
       '<span class="brand-name">' +
       C.masthead +
@@ -206,8 +208,8 @@
     return (
       '<section class="subscribe-band" id="recibir">' +
       '<div class="wrap"><p class="kicker">Lista del barrio</p>' +
-      "<h2>Recibí la edición por email o WhatsApp</h2>" +
-      "<p>Dejá un dato y te mandamos el enlace cuando salga el número. Sin spam: solo la revista.</p>" +
+      "<h2>Recibí Brisas por email o WhatsApp</h2>" +
+      "<p>Como en el papel: pedí la edición con tu mail o tu número. Por WhatsApp también alcanza con escribir QUIERO RECIBIR BRISAS al 11 5048-9366.</p>" +
       subscribeForm("band") +
       "</div></section>"
     );
@@ -283,7 +285,7 @@
       })
       .catch(function (err) {
         var text =
-          "Hola, quiero recibir Revista Don Torcuato.\nEmail: " +
+          "Hola, quiero recibir Revista Brisas.\nEmail: " +
           email +
           "\nWhatsApp: " +
           wa +
@@ -368,8 +370,10 @@
     const urlEdicion = abs("edicion.html");
     root.innerHTML =
       '<section class="cover"><div class="cover-copy">' +
-      '<div class="cover-issue">N° ' +
-      String(ed.numero).padStart(2, "0") +
+      '<div class="cover-issue">Año ' +
+      (ed.anioRevista || "") +
+      " · N° " +
+      ed.numero +
       " · " +
       ed.mes +
       " " +
@@ -383,7 +387,10 @@
       "</p>" +
       '<div class="actions">' +
       '<a class="btn" href="edicion.html">Leer la edición</a>' +
-      '<a class="btn btn-ghost" href="recibir.html">Recibir por mail o WhatsApp</a>' +
+      (C.pdfEdicion
+        ? '<a class="btn btn-ghost" href="' + C.pdfEdicion + '" target="_blank" rel="noopener">Ver el PDF</a>'
+        : "") +
+      '<a class="btn btn-ghost" href="recibir.html">Recibir Brisas</a>' +
       "</div>" +
       shareSet(C.nombre + " · " + ed.titulo, urlEdicion, C.lugar) +
       '</div><div class="cover-art" aria-hidden="true"></div></section>' +
@@ -400,7 +407,7 @@
       '<div class="grid-cards">' +
       dest.map(card).join("") +
       "</div></div></section>" +
-      '<section class="section"><div class="ad"><div class="ad-label">Espacio del anunciante</div><strong>Farmacia Reconquista</strong><p>Obra social, dermocosmética y delivery en Don Torcuato. Publicá el tuyo en la próxima edición.</p><div class="actions"><a class="btn btn-ink" href="anunciantes.html">Quiero anunciar</a></div></div></section>' +
+      '<section class="section"><div class="ad"><div class="ad-label">Espacio del anunciante</div><strong>Santi Racing</strong><p>Atención personalizada en Sourdeaux. Cierre de la edición de octubre: 20 de septiembre. 11 5048-9366.</p><div class="actions"><a class="btn btn-ink" href="anunciantes.html">Quiero anunciar en Brisas</a></div></div></section>' +
       '<section class="section"><div class="section-head"><h2>Secciones</h2></div><div class="grid-3 section-tiles">' +
       D.secciones
         .map(function (s) {
@@ -441,7 +448,7 @@
       "</div>" +
       '<div class="wa-row">' +
       '<a class="btn btn-wa" target="_blank" rel="noopener" href="' +
-      waLink(c.wa, "Hola, los vi en Revista Don Torcuato") +
+      waLink(c.wa, "Hola, los vi en Revista Brisas") +
       '">WhatsApp</a>' +
       '<a class="btn btn-line" href="tel:' +
       c.tel.replace(/\s/g, "") +
@@ -470,7 +477,7 @@
       p.mat +
       "</div>" +
       '<div class="wa-row"><a class="btn btn-wa" target="_blank" rel="noopener" href="' +
-      waLink(p.wa, "Hola " + p.nombre + ", te escribo por Revista Don Torcuato") +
+      waLink(p.wa, "Hola " + p.nombre + ", te escribo por Revista Brisas") +
       '">Pedir turno</a></div></article>'
     );
   }
@@ -660,7 +667,7 @@
     const url = abs("anunciantes.html");
     root.innerHTML =
       '<div class="wrap page-hero"><p class="kicker">Para comercios y profesionales</p><h1>Anunciá donde el barrio reenvía</h1><p>La revista se publica en el hosting y se reparte por WhatsApp, email e Instagram. Tu aviso no se queda quieto: se comparte.</p>' +
-      shareSet("Quiero anunciar en Revista Don Torcuato", url, "Paquetes para comercios y profesionales") +
+      shareSet("Quiero anunciar en Revista Brisas", url, "Paquetes para comercios y profesionales") +
       "</div>" +
       '<div class="wrap section"><div class="grid-cards">' +
       D.paquetes
@@ -853,7 +860,7 @@
     const ed = D.edicion;
     const url = abs("edicion.html");
     const waTexto =
-      "Salió Revista Don Torcuato N° " +
+      "Salió Revista Brisas N° " +
       ed.numero +
       " · " +
       ed.titulo +
@@ -864,7 +871,7 @@
     const mailTexto =
       "Hola,\n\nCompartimos la edición " +
       ed.numero +
-      " de Revista Don Torcuato (" +
+      " de Revista Brisas (" +
       ed.mes +
       " " +
       ed.anio +
@@ -874,7 +881,7 @@
       ed.bajada +
       "\n\nAbrí la revista: " +
       url +
-      "\n\nSi querés anunciar o sumar tu ficha profesional, respondé este mail.\n\nRedacción TORCUATO";
+      "\n\nSi querés anunciar o sumar tu ficha profesional, respondé este mail.\n\nRedacción Brisas";
 
     root.innerHTML =
       '<div class="wrap page-hero"><p class="kicker">Distribución</p><h1>Mandá la edición por WhatsApp, email y redes</h1><p>La revista vive en el hosting. Estos textos ya están listos para copiar y reenviar a grupos del barrio, listas de mail y estados.</p></div>' +
@@ -891,7 +898,7 @@
       mailTexto.replace(/\n/g, "<br>") +
       '</p><div class="wa-row">' +
       '<a class="btn btn-ink" href="' +
-      mailLink("Revista Don Torcuato N° " + ed.numero + " · " + ed.titulo, mailTexto) +
+      mailLink("Revista Brisas N° " + ed.numero + " · " + ed.titulo, mailTexto) +
       '">Abrir el mail</a>' +
       copyBtn(mailTexto, "Copiar texto") +
       "</div></article></div>" +

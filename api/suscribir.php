@@ -125,12 +125,12 @@ if ($out) {
 $config = is_file($dir . '/config.php') ? require $dir . '/config.php' : [];
 $notify = $config['notify_email'] ?? '';
 if ($notify && filter_var($notify, FILTER_VALIDATE_EMAIL)) {
-    $body = "Nueva suscripción a Revista Don Torcuato\n"
+    $body = "Nueva suscripción a Revista Brisas\n"
         . "Email: {$email}\n"
         . "WhatsApp: {$whatsapp}\n"
         . "Email: " . ($porEmail ? 'sí' : 'no') . "\n"
         . "WhatsApp: " . ($porWa ? 'sí' : 'no') . "\n";
-    @mail($notify, 'Nueva suscripción · Revista Don Torcuato', $body, 'From: ' . $notify);
+    @mail($notify, 'Nueva suscripción · Revista Brisas', $body, 'From: ' . $notify);
 }
 
 echo json_encode([

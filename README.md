@@ -1,4 +1,6 @@
-# Revista Don Torcuato
+# Revista Brisas
+
+Edición digital de **Brisas** (Don Torcuato). Año 32, N° 369, septiembre 2026.
 
 Revista digital de Don Torcuato (Tigre, Buenos Aires). Se publica en cualquier hosting y se reparte por WhatsApp, email y redes.
 

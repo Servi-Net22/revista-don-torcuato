@@ -1,5 +1,5 @@
 <?php
 return [
-    'notify_email' => 'hola@revistadontorcuato.com.ar',
+    'notify_email' => 'revistabrisas@yahoo.com.ar',
     'lista_clave' => 'torcuato-lista',
 ];

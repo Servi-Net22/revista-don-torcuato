@@ -102,38 +102,41 @@
 
     return (
       '<div class="topbar"><div class="wrap topbar-inner">' +
-      "<span>N° " +
+      "<span>Andén digital · N° " +
       String(ed.numero).padStart(2, "0") +
       " · " +
       ed.mes +
       " " +
       ed.anio +
-      " · " +
-      C.lugar +
-      "</span>" +
+      " · Tigre</span>" +
       '<span class="topbar-actions">' +
-      '<a href="recibir.html">Recibir ediciones</a>' +
-      '<a href="anunciantes.html">Publicar aviso</a>' +
+      '<a href="recibir.html">Recibir</a>' +
+      '<a href="anunciantes.html">Publicar</a>' +
       '<a href="contacto.html">Contacto</a>' +
       "</span></div></div>" +
-      '<header class="site-header"><div class="wrap">' +
-      '<div class="masthead">' +
-      '<div class="masthead-side">Edición ' +
-      String(ed.numero).padStart(2, "0") +
-      " · Digital</div>" +
+      '<header class="site-header">' +
+      '<div class="wrap header-row">' +
       '<a class="brand" href="index.html">' +
+      '<span class="brand-mark">DT</span>' +
+      '<span class="brand-stack">' +
       '<span class="brand-name">' +
       C.masthead +
       "</span>" +
       '<span class="brand-tag">' +
       C.lema +
-      "</span></a>" +
-      '<div class="masthead-side right">Tigre · Zona Norte</div>' +
-      "</div>" +
+      "</span></span></a>" +
+      '<div class="issue-stamp"><b>' +
+      String(ed.numero).padStart(2, "0") +
+      "</b><span>" +
+      ed.mes +
+      "<br>" +
+      ed.anio +
+      "</span></div>" +
       '<button class="nav-toggle" type="button" aria-expanded="false">Menú</button>' +
+      "</div>" +
       '<nav class="nav" id="nav">' +
       nav +
-      "</nav></div></header>"
+      "</nav></header>"
     );
   }
 
@@ -207,9 +210,9 @@
   function subscribeBand() {
     return (
       '<section class="subscribe-band" id="recibir">' +
-      '<div class="wrap"><p class="kicker">Lista del barrio</p>' +
-      "<h2>Recibí la revista por email o WhatsApp</h2>" +
-      "<p>Como en el papel: pedí la edición con tu mail o tu número. Te mandamos el enlace para leerla y reenviarla.</p>" +
+      '<div class="wrap"><p class="kicker">Boleto de ida</p>' +
+      "<h2>Anotate y te llega la edición</h2>" +
+      "<p>Dejá el mail o el WhatsApp. Cuando salga el número te mandamos el enlace para leerla en el tren o en el colectivo.</p>" +
       subscribeForm("band") +
       "</div></section>"
     );
@@ -385,7 +388,9 @@
 
     const urlEdicion = abs("edicion.html");
     root.innerHTML =
-      '<section class="cover"><div class="cover-copy">' +
+      '<section class="cover"><div class="cover-art">' +
+      (cover && cover.imagen ? artImg(cover, "cover-photo") : "") +
+      '</div><div class="cover-copy">' +
       '<div class="cover-issue">N° ' +
       String(ed.numero).padStart(2, "0") +
       " · " +
@@ -401,15 +406,10 @@
       "</p>" +
       '<div class="actions">' +
       '<a class="btn" href="edicion.html">Leer la edición</a>' +
-      (C.pdfEdicion
-        ? '<a class="btn btn-ghost" href="' + C.pdfEdicion + '" target="_blank" rel="noopener">Ver el PDF</a>'
-        : "") +
-      '<a class="btn btn-ghost" href="recibir.html">Recibir la revista</a>' +
-      '<a class="btn btn-ghost" href="indice.html">Índice de anunciantes</a>' +
+      '<a class="btn btn-ghost" href="recibir.html">Recibir</a>' +
+      '<a class="btn btn-ghost" href="indice.html">Índice</a>' +
       "</div>" +
       shareSet(C.nombre + " · " + ed.titulo, urlEdicion, C.lugar) +
-      '</div><div class="cover-art">' +
-      (cover && cover.imagen ? artImg(cover, "cover-photo") : "") +
       "</div></section>" +
       '<div class="wrap">' +
       '<section class="section"><div class="section-head"><h2>En esta edición</h2><a href="edicion.html">Ver todo</a></div>' +

@@ -1,7 +1,7 @@
 window.REVISTA_CONFIG = {
   nombre: "Revista Don Torcuato",
-  masthead: "TORCUATO",
-  lema: "La revista digital del barrio",
+  masthead: "Don Torcuato",
+  lema: "Diario digital de la estación",
   lugar: "Don Torcuato, Tigre, Buenos Aires",
   url: "https://servi-net.com.ar/revista-don-torcuato",
   email: "hola@revistadontorcuato.com.ar",
